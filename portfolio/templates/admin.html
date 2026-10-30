@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Settings</title>
+<style>
+  body{font-family:'Segoe UI',system-ui,sans-serif;background:#0b0f1a;color:#e8ecf5;margin:0;padding:24px}
+  .wrap{max-width:900px;margin:auto}
+  h1{margin:0 0 6px}
+  h2{margin:30px 0 12px;color:#00d4ff;font-size:1.15rem}
+  label{display:block;font-size:.8rem;color:#9aa5bf;margin:10px 0 4px}
+  input,textarea{width:100%;padding:10px 12px;background:#141a2b;border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#e8ecf5;font:inherit;box-sizing:border-box}
+  textarea{min-height:90px;resize:vertical}
+  .item{background:#141a2b;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:14px 16px;margin-bottom:14px}
+  .item input,.item textarea{background:#0b0f1a}
+  button,.lnk{background:linear-gradient(90deg,#7c5cff,#00d4ff);border:0;color:#fff;padding:10px 20px;border-radius:24px;font:inherit;font-weight:600;cursor:pointer;text-decoration:none;display:inline-block}
+  button.sec{background:none;border:1px solid #7c5cff}
+  button.del{background:#c0392b;padding:6px 14px;font-size:.8rem;margin-top:12px}
+  .bar{position:sticky;bottom:0;background:#0b0f1a;padding:14px 0;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+  .top{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}
+  .login{max-width:360px;margin:12vh auto}
+  .err{color:#ff6b6b}
+</style>
+</head>
+<body>
+{% if not logged %}
+<div class="login">
+  <h1>Settings</h1>
+  <p style="color:#9aa5bf">Enter your password</p>
+  <form method="post">
+    <input type="password" name="password" placeholder="Password" autofocus required><br><br>
+    <button type="submit">Login</button>
+  </form>
+  {% if error %}<p class="err">{{ error }}</p>{% endif %}
+  <p><a href="{{ url_for('home') }}" style="color:#9aa5bf">← Back to portfolio</a></p>
+</div>
+{% else %}
+<div class="wrap">
+  <h1>Portfolio Settings</h1>
+  <div class="top">
+    <a class="lnk" href="{{ url_for('home') }}" target="_blank">View site</a>
+    <a class="lnk" href="{{ url_for('admin_export') }}">Backup data.json</a>
+    <a class="lnk" href="{{ url_for('admin_logout') }}">Logout</a>
+  </div>
+  <div id="form"></div>
+
+  <h2>Change password</h2>
+  <div class="item">
+    <label>Current password</label>
+    <input type="password" id="pwCur" autocomplete="current-password">
+    <label>New password (minimum 8 characters)</label>
+    <input type="password" id="pwNew" autocomplete="new-password">
+    <label>Confirm new password</label>
+    <input type="password" id="pwConf" autocomplete="new-password">
+    <br><br>
+    <button class="sec" id="pwBtn">Change password</button>
+    <span id="pwMsg" style="margin-left:12px"></span>
+  </div>
+  <div class="bar"><button id="save">Save changes</button><span id="msg"></span></div>
+</div>
+
+<script>
+const D = {{ d|tojson }};
+const F = document.getElementById("form");
+const BLANK = {
+  projects: {title:"", year:"", desc:"", tags:[]},
+  skills: {name:"", level:70},
+  education: {title:"", org:"", period:"", note:""}
+};
+const esc = s => String(s ?? "").replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;");
+
+function f(label, p, val, t, area){
+  if(t === "csv") val = (val || []).join(", ");
+  if(t === "lines") val = (val || []).join("\n");
+  const a = `data-p="${p}" data-t="${t || ""}"`;
+  return `<label>${label}</label>` + (area
+    ? `<textarea ${a}>${esc(val)}</textarea>`
+    : `<input ${a} value="${esc(val)}">`);
+}
+
+function render(){
+  let h = "<h2>Basic info</h2>"
+    + f("Name","name",D.name) + f("Email","email",D.email)
+    + f("Phone","phone",D.phone) + f("LinkedIn URL","linkedin",D.linkedin)
+    + f("Typing roles (comma separated)","roles",D.roles,"csv")
+    + f("About","about",D.about,"",1)
+    + f("Languages (comma separated)","languages",D.languages,"csv");
+
+  h += "<h2>Experience</h2><div class='item'>"
+    + f("Title","experience.title",D.experience.title)
+    + f("Organization","experience.org",D.experience.org)
+    + f("Period","experience.period",D.experience.period)
+    + f("Points (one per line)","experience.points",D.experience.points,"lines",1)
+    + "</div>";
+
+  h += "<h2>Projects</h2>" + D.projects.map((p,i) => "<div class='item'>"
+    + f("Title",`projects.${i}.title`,p.title) + f("Year",`projects.${i}.year`,p.year)
+    + f("Description",`projects.${i}.desc`,p.desc,"",1)
+    + f("Tags (comma separated)",`projects.${i}.tags`,p.tags,"csv")
+    + `<button class="del" data-del="projects" data-i="${i}">Delete</button></div>`).join("")
+    + `<button class="sec" data-add="projects">+ Add project</button>`;
+
+  h += "<h2>Skills</h2>" + D.skills.map((s,i) => "<div class='item'>"
+    + f("Skill",`skills.${i}.name`,s.name) + f("Level (0-100)",`skills.${i}.level`,s.level,"num")
+    + `<button class="del" data-del="skills" data-i="${i}">Delete</button></div>`).join("")
+    + `<button class="sec" data-add="skills">+ Add skill</button>`;
+
+  h += "<h2>Education</h2>" + D.education.map((e,i) => "<div class='item'>"
+    + f("Title",`education.${i}.title`,e.title) + f("Institution",`education.${i}.org`,e.org)
+    + f("Period",`education.${i}.period`,e.period) + f("Note (CGPA / %)",`education.${i}.note`,e.note)
+    + `<button class="del" data-del="education" data-i="${i}">Delete</button></div>`).join("")
+    + `<button class="sec" data-add="education">+ Add education</button>`;
+
+  h += "<h2>Certificates</h2>" + f("Certificates (one per line)","certs",D.certs,"lines",1);
+  F.innerHTML = h;
+}
+
+function setPath(path, val){
+  const k = path.split("."); let o = D;
+  for(let i = 0; i < k.length - 1; i++) o = o[k[i]];
+  o[k[k.length - 1]] = val;
+}
+
+F.addEventListener("input", e => {
+  const t = e.target, p = t.dataset.p;
+  if(!p) return;
+  let v = t.value;
+  if(t.dataset.t === "csv") v = v.split(",").map(x => x.trim()).filter(Boolean);
+  else if(t.dataset.t === "lines") v = v.split("\n").map(x => x.trim()).filter(Boolean);
+  else if(t.dataset.t === "num") v = Math.max(0, Math.min(100, parseInt(v) || 0));
+  setPath(p, v);
+});
+
+F.addEventListener("click", e => {
+  const a = e.target.dataset;
+  if(a.add){ D[a.add].push(structuredClone(BLANK[a.add])); render(); }
+  if(a.del){ D[a.del].splice(+a.i, 1); render(); }
+});
+
+document.getElementById("pwBtn").onclick = async () => {
+  const m = document.getElementById("pwMsg");
+  m.textContent = "Please wait...";
+  try{
+    const r = await fetch("{{ url_for('admin_password') }}", {
+      method: "POST", headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({
+        current: document.getElementById("pwCur").value,
+        new: document.getElementById("pwNew").value,
+        confirm: document.getElementById("pwConf").value
+      })
+    });
+    const j = await r.json();
+    m.textContent = j.msg;
+    m.style.color = j.ok ? "#4ade80" : "#ff6b6b";
+    if(j.ok) ["pwCur","pwNew","pwConf"].forEach(id => document.getElementById(id).value = "");
+  }catch(err){ m.textContent = "Failed. Try again"; m.style.color = "#ff6b6b"; }
+};
+
+document.getElementById("save").onclick = async () => {
+  const m = document.getElementById("msg");
+  m.textContent = "Saving...";
+  try{
+    const r = await fetch("{{ url_for('admin_save') }}", {
+      method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify(D)
+    });
+    m.textContent = r.ok ? "Saved ✔ Refresh your portfolio" : "Save failed. Login again.";
+  }catch(err){ m.textContent = "Save failed"; }
+};
+
+render();
+</script>
+{% endif %}
+</body>
+</html>
