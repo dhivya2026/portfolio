@@ -1,0 +1,114 @@
+{
+  "about": "Graduate in Artificial Intelligence and Machine Learning with practical experience in software development and college ERP projects. I enjoy building web applications, improving existing systems, and using AI-assisted coding tools to deliver software solutions. Eager to learn new technologies and contribute to real-world projects.",
+  "certs": [
+    "Internship on Power BI (2024–2025)",
+    "Internship on Mobile App Development Using Flutter (2023–2024)",
+    "Workshop on Digital Marketing (2023–2024)"
+  ],
+  "education": [
+    {
+      "note": "CGPA: 8.67",
+      "org": "Avinashilingam Institute for Home Science and Higher Education for Women",
+      "period": "2023–2026",
+      "title": "B.Voc – Artificial Intelligence & Machine Learning"
+    },
+    {
+      "note": "80%",
+      "org": "Shri Vidyasaagar Higher Secondary School",
+      "period": "",
+      "title": "Higher Secondary Certificate (HSC)"
+    }
+  ],
+  "email": "dhivyas2026@gmail.com",
+  "experience": {
+    "org": "Technology Innovation Hub, M. Kumarasamy College of Engineering, Karur",
+    "period": "Present",
+    "points": [
+      "Worked on college ERP development and improvements using PHP, MySQL, HTML, CSS and JavaScript.",
+      "Developed a Performance-Based Appraisal System (PBAS) for faculty and HODs, including an approval workflow.",
+      "Improved mobile-view layouts for selected ERP user logins.",
+      "Implemented file upload validation to meet application requirements.",
+      "Currently migrating existing PHP modules to the Laravel framework.",
+      "Using AI-assisted coding tools to develop features, modify existing code and fix errors."
+    ],
+    "title": "Software Developer Intern"
+  },
+  "languages": [
+    "English",
+    "Tamil"
+  ],
+  "linkedin": "https://linkedin.com/in/dhivya-samiraj-92b711287",
+  "name": "Dhivya S",
+  "phone": "+91 97516 94389",
+  "projects": [
+    {
+      "desc": "Automated resume screening using NLP; extracts and analyzes resume information to improve candidate shortlisting.",
+      "tags": [
+        "Python",
+        "NLP"
+      ],
+      "title": "Resume Screening System Using NLP",
+      "year": "2024–2025"
+    },
+    {
+      "desc": "Healthcare app that analyzes medical reports and recommends doctors, with multilingual translation for accessibility.",
+      "tags": [
+        "Python",
+        "Flask",
+        "Translation"
+      ],
+      "title": "Health Report Analyzer with Doctor Suggestions",
+      "year": "2024–2025"
+    },
+    {
+      "desc": "Classified text as positive, negative or neutral using machine learning to give decision-making insights.",
+      "tags": [
+        "Python",
+        "Machine Learning"
+      ],
+      "title": "Text Sentiment Analysis",
+      "year": "2025–2026"
+    },
+    {
+      "desc": "Responsive web app that helps job seekers create professional online portfolios with user-friendly interfaces.",
+      "tags": [
+        "HTML",
+        "CSS",
+        "JavaScript"
+      ],
+      "title": "Web-Based Portfolio Creation for Job Seekers",
+      "year": "2025–2026"
+    }
+  ],
+  "roles": [
+    "Software Developer",
+    "AI & ML Graduate",
+    "Laravel Learner"
+  ],
+  "skills": [
+    {
+      "level": 80,
+      "name": "PHP"
+    },
+    {
+      "level": 75,
+      "name": "Python"
+    },
+    {
+      "level": 75,
+      "name": "MySQL"
+    },
+    {
+      "level": 85,
+      "name": "HTML / CSS"
+    },
+    {
+      "level": 70,
+      "name": "JavaScript"
+    },
+    {
+      "level": 70,
+      "name": "Power BI / Tableau"
+    }
+  ]
+}
