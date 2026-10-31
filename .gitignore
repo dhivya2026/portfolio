@@ -1,2 +1,4 @@
 admin_pw.json
+.env
 __pycache__/
+*.pyc
