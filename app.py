@@ -77,11 +77,10 @@ def build_resume_pdf(d):
         s.append(Paragraph(e(p["desc"]), bullet_s, bulletText="•"))
         s.append(Spacer(1, 3))
 
-    s += [
-        Paragraph("Technical Skills", head_s),
-        Paragraph(e(", ".join(k["name"] for k in d["skills"])), body_s),
-        Paragraph("Education", head_s),
-    ]
+    s.append(Paragraph("Technical Skills", head_s))
+    for k in d["skills"]:
+        s.append(Paragraph(f'<b>{e(k["category"])}:</b> {e(", ".join(k["items"]))}', body_s))
+    s.append(Paragraph("Education", head_s))
     for ed in d["education"]:
         line = f'<b>{e(ed["title"])}</b>' + (f' ({e(ed["period"])})' if ed["period"] else "")
         s += [Paragraph(line, body_s), Paragraph(f'{e(ed["org"])} - {e(ed["note"])}', body_s)]

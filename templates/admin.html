@@ -65,7 +65,7 @@ const D = {{ d|tojson }};
 const F = document.getElementById("form");
 const BLANK = {
   projects: {title:"", year:"", desc:"", tags:[]},
-  skills: {name:"", level:70},
+  skills: {category:"", items:[]},
   education: {title:"", org:"", period:"", note:""}
 };
 const esc = s => String(s ?? "").replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;");
@@ -84,6 +84,7 @@ function render(){
     + f("Name","name",D.name) + f("Email","email",D.email)
     + f("Phone","phone",D.phone) + f("LinkedIn URL","linkedin",D.linkedin)
     + f("Typing roles (comma separated)","roles",D.roles,"csv")
+    + f("Short tagline (shown under your name)","tagline",D.tagline,"",1)
     + f("About","about",D.about,"",1)
     + f("Languages (comma separated)","languages",D.languages,"csv");
 
@@ -102,9 +103,10 @@ function render(){
     + `<button class="sec" data-add="projects">+ Add project</button>`;
 
   h += "<h2>Skills</h2>" + D.skills.map((s,i) => "<div class='item'>"
-    + f("Skill",`skills.${i}.name`,s.name) + f("Level (0-100)",`skills.${i}.level`,s.level,"num")
+    + f("Category (example: Programming)",`skills.${i}.category`,s.category)
+    + f("Skills in this category (comma separated)",`skills.${i}.items`,s.items,"csv")
     + `<button class="del" data-del="skills" data-i="${i}">Delete</button></div>`).join("")
-    + `<button class="sec" data-add="skills">+ Add skill</button>`;
+    + `<button class="sec" data-add="skills">+ Add skill group</button>`;
 
   h += "<h2>Education</h2>" + D.education.map((e,i) => "<div class='item'>"
     + f("Title",`education.${i}.title`,e.title) + f("Institution",`education.${i}.org`,e.org)

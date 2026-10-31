@@ -4,304 +4,259 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{{ d.name }} | Portfolio</title>
-<script>document.documentElement.dataset.theme = localStorage.getItem("theme") || "dark";</script>
+<script>
+try{ document.documentElement.dataset.theme = localStorage.getItem("theme") || "dark"; }
+catch(e){ document.documentElement.dataset.theme = "dark"; }
+</script>
 <style>
-  :root{--bg:#0b0f1a;--card:#141a2b;--text:#e8ecf5;--muted:#9aa5bf;--a1:#7c5cff;--a2:#00d4ff;--nav:rgba(11,15,26,.75);--bar:#1f2740;--line:rgba(255,255,255,.08);--dot:rgba(0,212,255,.7);}
-  [data-theme="light"]{--bg:#f4f6fb;--card:#ffffff;--text:#1b2238;--muted:#5a6785;--a1:#6a4bff;--a2:#0087b8;--nav:rgba(255,255,255,.85);--bar:#e3e8f5;--line:rgba(0,0,0,.09);--dot:rgba(0,135,184,.55);}
-  body,.card,nav{transition:background .4s,color .4s}
-  *{margin:0;padding:0;box-sizing:border-box}
-  html{scroll-behavior:smooth}
-  body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden}
-  canvas#bg{position:fixed;inset:0;z-index:-1}
-  nav{position:fixed;top:0;width:100%;display:flex;justify-content:space-between;align-items:center;padding:16px 6%;background:var(--nav);backdrop-filter:blur(10px);z-index:10}
-  nav .logo{font-weight:700;font-size:1.2rem;background:linear-gradient(90deg,var(--a1),var(--a2));-webkit-background-clip:text;color:transparent}
-  nav ul{display:flex;gap:24px;list-style:none}
-  nav a{color:var(--muted);text-decoration:none;font-size:.95rem;transition:.3s}
-  nav a:hover{color:var(--a2)}
-  section{padding:110px 8% 60px;max-width:1100px;margin:auto}
-  h2{font-size:2rem;margin-bottom:30px}
-  h2 span{background:linear-gradient(90deg,var(--a1),var(--a2));-webkit-background-clip:text;color:transparent}
-  #home{min-height:100vh;display:flex;flex-direction:column;justify-content:center}
-  #home h1{font-size:clamp(2.4rem,7vw,4.5rem);animation:fadeUp 1s both}
-  #home h1 span{background:linear-gradient(90deg,var(--a1),var(--a2));-webkit-background-clip:text;color:transparent}
-  .typed{font-size:1.6rem;color:var(--a2);min-height:2.2rem;margin:10px 0 20px}
-  .typed::after{content:"|";animation:blink 1s infinite}
-  .btns{display:flex;gap:14px;flex-wrap:wrap;margin-top:10px}
-  .btn{padding:12px 26px;border-radius:30px;text-decoration:none;font-weight:600;transition:.3s;display:inline-block}
-  .btn.p{background:linear-gradient(90deg,var(--a1),var(--a2));color:#fff}
-  .btn.o{border:2px solid var(--a1);color:var(--text)}
-  .btn:hover{transform:translateY(-4px);box-shadow:0 10px 25px rgba(124,92,255,.4)}
-  .card{background:var(--card);border-radius:16px;padding:24px;border:1px solid var(--line);transition:.3s}
-  .card:hover{transform:translateY(-8px);border-color:var(--a1);box-shadow:0 12px 30px rgba(124,92,255,.25)}
-  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:22px}
-  .tag{display:inline-block;font-size:.75rem;padding:3px 10px;border-radius:20px;background:rgba(0,212,255,.12);color:var(--a2);margin:10px 6px 0 0}
-  .muted{color:var(--muted)}
-  ul.pts{padding-left:20px;margin-top:12px}
-  ul.pts li{margin-bottom:8px;color:var(--muted)}
-  .bar{height:10px;background:var(--bar);border-radius:10px;overflow:hidden;margin:6px 0 18px}
-  .bar div{height:100%;width:0;background:linear-gradient(90deg,var(--a1),var(--a2));border-radius:10px;transition:width 1.4s ease}
-  .skillrow{display:flex;justify-content:space-between}
-  .timeline{border-left:3px solid var(--a1);padding-left:22px;display:grid;gap:20px}
-  .reveal{opacity:0;transform:translateY(40px);transition:all .8s ease}
-  .reveal.show{opacity:1;transform:none}
-  footer{text-align:center;padding:30px;color:var(--muted)}
-  @keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:none}}
-  @keyframes blink{50%{opacity:0}}
-  .theme-btn{background:none;border:1px solid var(--line);color:var(--text);width:40px;height:40px;border-radius:50%;cursor:pointer;font-size:1.1rem;transition:.3s}
-  .theme-btn:hover{border-color:var(--a1);transform:rotate(20deg)}
-  .float{position:fixed;top:16px;right:16px;z-index:20;background:var(--card)}
-  .gear{right:64px;display:flex;align-items:center;justify-content:center;text-decoration:none}
-  button.btn{border:0;cursor:pointer;font-size:1rem;font-family:inherit}
-  button.btn.o{background:none;border:2px solid var(--a1);color:var(--text)}
-  /* modal */
-  .modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:.3s;z-index:50}
-  .modal.show{opacity:1;pointer-events:auto}
-  .modal-box{background:var(--card);border:1px solid var(--line);border-radius:18px;max-width:640px;width:100%;max-height:85vh;overflow:auto;padding:30px;position:relative;transform:translateY(30px) scale(.96);transition:.3s}
-  .modal.show .modal-box{transform:none}
-  .modal-close{position:absolute;top:12px;right:18px;background:none;border:0;color:var(--text);font-size:1.8rem;cursor:pointer}
-  .modal h3{margin-top:22px}
-  /* project accordion */
-  .acc{display:grid;gap:14px}
-  .acc-item{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;transition:.3s}
-  .acc-item:hover,.acc-item.open{border-color:var(--a1)}
-  .acc-head{width:100%;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:18px 22px;background:none;border:0;color:var(--text);font:inherit;font-size:1.05rem;font-weight:600;cursor:pointer;text-align:left}
-  .acc-head .arrow{color:var(--a2);transition:.3s}
-  .acc-item.open .arrow{transform:rotate(180deg)}
-  .acc-body{max-height:0;overflow:hidden;transition:max-height .4s ease;padding:0 22px}
-  .acc-item.open .acc-body{padding-bottom:20px}
-  /* tabs */
-  .modal .modal-box{max-width:1500px;width:96vw;height:92vh;max-height:92vh;padding:44px 56px;overflow:auto}
-  .modal .tab{font-size:1rem;padding:10px 24px}
-  .modal .tabpane{font-size:1.05rem}
-  .modal .pgrid{grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
-  .tabs{display:flex;gap:8px;flex-wrap:wrap;margin:22px 0 20px;padding-bottom:14px;border-bottom:1px solid var(--line)}
-  .tab{background:none;border:1px solid var(--line);color:var(--muted);padding:8px 16px;border-radius:20px;cursor:pointer;font:inherit;font-size:.9rem;transition:.3s}
-  .tab:hover{color:var(--text);border-color:var(--a1)}
-  .tab.active{background:linear-gradient(90deg,var(--a1),var(--a2));color:#fff;border-color:transparent}
-  .tabpane{display:none}
-  .tabpane.active{display:block;animation:fadeUp .4s both}
-  /* project cards */
-  .pgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;align-items:start}
-  .pcard{background:var(--bg);border:1px solid var(--line);border-radius:16px;overflow:hidden;transition:.3s}
-  .pcard:hover,.pcard.open{border-color:var(--a1);transform:translateY(-4px);box-shadow:0 10px 25px rgba(124,92,255,.22)}
-  .pcard-head{width:100%;display:flex;align-items:center;gap:12px;padding:18px;background:none;border:0;color:var(--text);font:inherit;font-weight:600;text-align:left;cursor:pointer}
-  .pnum{font-size:1.4rem;font-weight:800;background:linear-gradient(90deg,var(--a1),var(--a2));-webkit-background-clip:text;color:transparent}
-  .pcard-head .arrow{margin-left:auto;color:var(--a2);transition:.3s}
-  .pcard.open .arrow{transform:rotate(180deg)}
-  .pbody{max-height:0;overflow:hidden;transition:max-height .4s ease;padding:0 18px}
-  .pcard.open .pbody{padding-bottom:18px}
-    /* animated background */
-  :root{--bg1:#05070f;--glow:rgba(124,92,255,.40);--glow2:rgba(0,212,255,.30);--grid:rgba(255,255,255,.05)}
-  [data-theme="light"]{--bg1:#f5f7ff;--glow:rgba(106,75,255,.25);--glow2:rgba(0,135,184,.20);--grid:rgba(0,0,0,.06)}
-  .bg{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none;background:var(--bg1)}
-  .bg::before{content:"";position:absolute;inset:-50%;background:conic-gradient(from 0deg at 50% 50%,var(--glow),transparent 25%,var(--glow2),transparent 60%,var(--glow));filter:blur(90px);animation:spin 30s linear infinite;will-change:transform}
-  .bg::after{content:"";position:absolute;inset:0;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:56px 56px;-webkit-mask-image:radial-gradient(circle at center,#000 25%,transparent 85%);mask-image:radial-gradient(circle at center,#000 25%,transparent 85%)}
-  .bg .spot{position:absolute;left:0;top:0;width:520px;height:520px;border-radius:50%;background:radial-gradient(circle,var(--glow2),transparent 65%);transform:translate(var(--mx,50vw),var(--my,50vh)) translate(-50%,-50%);transition:transform .2s ease-out;z-index:1}
-  @keyframes spin{to{transform:rotate(360deg)}}
-  @media(max-width:700px){nav ul{display:none}}
+:root{--bg:#070a14;--card:#111729;--text:#e8ecf5;--muted:#9aa5bf;--a1:#7c5cff;--a2:#00d4ff;--nav:rgba(7,10,20,.82);--line:rgba(255,255,255,.09);--glow:rgba(124,92,255,.40);--glow2:rgba(0,212,255,.30);--grid:rgba(255,255,255,.05)}
+[data-theme="light"]{--bg:#f5f7ff;--card:#ffffff;--text:#1b2238;--muted:#5a6785;--a1:#6a4bff;--a2:#0087b8;--nav:rgba(255,255,255,.88);--line:rgba(0,0,0,.09);--glow:rgba(106,75,255,.25);--glow2:rgba(0,135,184,.20);--grid:rgba(0,0,0,.06)}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.65;overflow-x:hidden;transition:background .4s,color .4s}
+.grad{background:linear-gradient(90deg,var(--a1),var(--a2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.muted{color:var(--muted)}
+
+/* animated background */
+.bg{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none;background:var(--bg)}
+.bg::before{content:"";position:absolute;inset:-50%;background:conic-gradient(from 0deg at 50% 50%,var(--glow),transparent 25%,var(--glow2),transparent 60%,var(--glow));filter:blur(90px);animation:spin 30s linear infinite;will-change:transform}
+.bg::after{content:"";position:absolute;inset:0;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:56px 56px;-webkit-mask-image:radial-gradient(circle at center,#000 25%,transparent 85%);mask-image:radial-gradient(circle at center,#000 25%,transparent 85%)}
+.bg .spot{position:absolute;left:0;top:0;width:520px;height:520px;border-radius:50%;background:radial-gradient(circle,var(--glow2),transparent 65%);transform:translate(var(--mx,50vw),var(--my,50vh)) translate(-50%,-50%);transition:transform .2s ease-out;z-index:1}
+
+/* navbar */
+nav{position:fixed;top:0;left:0;right:0;z-index:30;display:flex;align-items:center;justify-content:space-between;padding:14px 6%;background:var(--nav);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.logo{font-weight:800;font-size:1.25rem;text-decoration:none}
+.links{display:flex;gap:26px;list-style:none;align-items:center}
+.links a{text-decoration:none;color:var(--muted);font-size:.95rem;transition:.3s;position:relative}
+.links a:hover,.links a.active{color:var(--text)}
+.links a.active::after{content:"";position:absolute;left:0;right:0;bottom:-6px;height:2px;background:linear-gradient(90deg,var(--a1),var(--a2));border-radius:2px}
+.tools{display:flex;gap:10px;align-items:center}
+.icon-btn{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--text);cursor:pointer;font-size:1.05rem;display:flex;align-items:center;justify-content:center;text-decoration:none;transition:.3s;font-family:inherit}
+.icon-btn:hover{border-color:var(--a1);transform:translateY(-2px)}
+#menuBtn{display:none}
+
+/* layout */
+section{padding:100px 8% 30px;max-width:1200px;margin:auto}
+.title{font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:8px}
+.sub{color:var(--muted);margin-bottom:34px}
+.reveal{opacity:0}
+.reveal.show{opacity:1;animation:fadeUp .8s ease backwards}
+
+/* hero */
+#home{min-height:100vh;display:grid;grid-template-columns:1.3fr .7fr;gap:40px;align-items:center;padding-top:110px}
+.hello{color:var(--a2);font-weight:600;letter-spacing:.08em}
+#home h1{font-size:clamp(2.6rem,7vw,5rem);line-height:1.1;margin:8px 0}
+.typed{font-size:clamp(1.2rem,3vw,1.7rem);color:var(--a2);min-height:2.4rem}
+.typed::after{content:"|";animation:blink 1s infinite}
+.tagline{max-width:560px;margin:14px 0 28px}
+.btns{display:flex;gap:14px;flex-wrap:wrap}
+.btn{padding:13px 28px;border-radius:30px;text-decoration:none;font-weight:600;display:inline-block;transition:.3s;border:2px solid transparent;font-size:1rem}
+.btn.p{background:linear-gradient(90deg,var(--a1),var(--a2));color:#fff}
+.btn.o{border-color:var(--a1);color:var(--text)}
+.btn:hover{transform:translateY(-4px);box-shadow:0 10px 25px rgba(124,92,255,.4)}
+.avatar{width:min(300px,70vw);aspect-ratio:1;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:5rem;font-weight:800;color:#fff;background:linear-gradient(135deg,var(--a1),var(--a2));position:relative;margin:auto;animation:float 6s ease-in-out infinite}
+.avatar::before{content:"";position:absolute;inset:-14px;border-radius:50%;border:2px dashed var(--a1);animation:spin 24s linear infinite}
+
+/* cards */
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:26px;transition:transform .3s,border-color .3s,box-shadow .3s}
+.card:hover{transform:translateY(-6px);border-color:var(--a1);box-shadow:0 14px 34px rgba(124,92,255,.22)}
+.card h3{margin-bottom:6px}
+.about-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:22px}
+.info p{margin-top:8px;word-break:break-word}
+.info b{display:block;font-size:.8rem;color:var(--a2);text-transform:uppercase;letter-spacing:.06em}
+.chip{display:inline-block;padding:6px 14px;border-radius:20px;background:rgba(124,92,255,.12);border:1px solid var(--line);font-size:.88rem;margin:8px 8px 0 0;transition:.3s}
+.chip:hover{background:linear-gradient(90deg,var(--a1),var(--a2));color:#fff}
+ul.pts{padding-left:20px;margin-top:14px}
+ul.pts li{margin-bottom:8px;color:var(--muted)}
+
+/* experience */
+.timeline{border-left:2px solid var(--line);padding-left:30px}
+.tl-item{position:relative}
+.tl-item::before{content:"";position:absolute;left:-39px;top:30px;width:16px;height:16px;border-radius:50%;background:linear-gradient(90deg,var(--a1),var(--a2));box-shadow:0 0 0 5px var(--bg)}
+
+/* projects */
+.pgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:22px;align-items:start}
+.pnum{font-size:2rem;font-weight:800}
+.more{margin-top:14px;background:none;border:1px solid var(--line);color:var(--text);padding:8px 18px;border-radius:20px;cursor:pointer;font:inherit;font-size:.9rem;transition:.3s}
+.more:hover{border-color:var(--a1)}
+.more .arrow{display:inline-block;color:var(--a2);transition:.3s}
+.pcard.open .more .arrow{transform:rotate(180deg)}
+.pbody{max-height:0;overflow:hidden;transition:max-height .4s ease}
+.pbody p{padding-top:14px}
+
+/* skills */
+.sgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:22px}
+.sgrid h3{color:var(--a2)}
+
+/* education + contact */
+.egrid,.cgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:22px}
+.clink{text-decoration:none;color:var(--text);display:block;word-break:break-word}
+.clink .ico{font-size:1.8rem;display:block;margin-bottom:6px}
+#contact{padding-bottom:90px}
+
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes float{50%{transform:translateY(-14px)}}
+@keyframes blink{50%{opacity:0}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(36px)}to{opacity:1;transform:none}}
+
+/* tablet and mobile */
+@media(max-width:860px){
+  #menuBtn{display:flex}
+  .links{position:fixed;top:68px;left:0;right:0;flex-direction:column;gap:0;background:var(--card);border-bottom:1px solid var(--line);max-height:0;overflow:hidden;transition:max-height .35s ease}
+  .links.open{max-height:520px}
+  .links li{width:100%;text-align:center}
+  .links a{display:block;padding:14px}
+  .links a.active::after{display:none}
+  #home{grid-template-columns:1fr;text-align:center;padding-top:100px;gap:28px}
+  .avatar-wrap{order:-1}
+  .avatar{width:170px;font-size:3.2rem}
+  .tagline{margin-left:auto;margin-right:auto}
+  .btns{justify-content:center}
+  .about-grid{grid-template-columns:1fr}
+  section{padding:90px 6% 20px}
+  .bg::before{filter:blur(60px);animation-duration:45s}
+  .bg .spot{display:none}
+}
+@media(max-width:480px){
+  .btns .btn{flex:1 1 100%;text-align:center}
+  .timeline{padding-left:22px}
+  .tl-item::before{left:-31px}
+}
+@media(prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+  .reveal{opacity:1}
+}
 </style>
 </head>
 <body>
+
 <div class="bg"><div class="spot"></div></div>
 
-<button class="theme-btn float" id="themeBtn" aria-label="Toggle theme">🌙</button>
-<a class="theme-btn float gear" href="{{ url_for('admin') }}" title="Settings" aria-label="Settings">⚙️</a>
+<nav>
+  <a class="logo grad" href="#home">{{ d.name }}</a>
+  <ul class="links" id="menu">
+    <li><a href="#home">Home</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#education">Education</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <div class="tools">
+    <button class="icon-btn" id="themeBtn" aria-label="Toggle theme">🌙</button>
+    <a class="icon-btn" href="{{ url_for('admin') }}" title="Settings" aria-label="Settings">⚙️</a>
+    <button class="icon-btn" id="menuBtn" aria-label="Menu">☰</button>
+  </div>
+</nav>
 
 <section id="home">
-  <p class="muted">Hello, I'm</p>
-  <h1><span>{{ d.name }}</span></h1>
-  <div class="typed" id="typed"></div>
-  <p class="muted" style="max-width:560px">Building web applications and improving real-world systems with PHP, Python and AI-assisted development.</p>
-  <div class="btns">
-    <button class="btn p" id="openProfile">View Profile</button>
-    <a class="btn o" href="{{ url_for('download_resume') }}">Download Resume</a>
-    <a class="btn o" href="{{ gmail }}" target="_blank" rel="noopener">Email Me</a>
+  <div>
+    <p class="hello">HELLO, I'M</p>
+    <h1 class="grad">{{ d.name }}</h1>
+    <div class="typed" id="typed"></div>
+    {% if d.tagline %}<p class="muted tagline">{{ d.tagline }}</p>{% endif %}
+    <div class="btns">
+      <a class="btn p" href="#projects">View Projects</a>
+      <a class="btn o" href="{{ url_for('download_resume') }}">Download Resume</a>
+      <a class="btn o" href="{{ gmail }}" target="_blank" rel="noopener" data-mail>Email Me</a>
+    </div>
+  </div>
+  <div class="avatar-wrap">
+    <div class="avatar">{{ d.name.split()|map('first')|join('') }}</div>
   </div>
 </section>
 
-<!-- <section id="about" class="reveal">
-  <h2>About <span>Me</span></h2>
-  <div class="card"><p class="muted">{{ d.about }}</p></div>
+<section id="about">
+  <h2 class="title reveal">About <span class="grad">Me</span></h2>
+  <div class="about-grid">
+    <div class="card reveal"><p class="muted">{{ d.about }}</p></div>
+    <div class="card info reveal">
+      <h3>Quick Info</h3>
+      <p><b>Email</b>{{ d.email }}</p>
+      <p><b>Phone</b>{{ d.phone }}</p>
+      <p><b>Languages</b>{% for l in d.languages %}<span class="chip">{{ l }}</span>{% endfor %}</p>
+    </div>
+  </div>
 </section>
 
-<section id="experience" class="reveal">
-  <h2>Work <span>Experience</span></h2>
+<section id="experience">
+  <h2 class="title reveal">Work <span class="grad">Experience</span></h2>
   <div class="timeline">
-    <div class="card">
+    <div class="card tl-item reveal">
       <h3>{{ d.experience.title }}</h3>
-      <p class="muted">{{ d.experience.org }} · {{ d.experience.period }}</p>
-      <ul class="pts">
-        {% for p in d.experience.points %}<li>{{ p }}</li>{% endfor %}
-      </ul>
+      <p class="muted">{{ d.experience.org }}</p>
+      <span class="chip">{{ d.experience.period }}</span>
+      <ul class="pts">{% for p in d.experience.points %}<li>{{ p }}</li>{% endfor %}</ul>
     </div>
   </div>
 </section>
 
-<section id="projects" class="reveal">
-  <h2>My <span>Projects</span></h2>
-  <div class="acc">
+<section id="projects">
+  <h2 class="title reveal">My <span class="grad">Projects</span></h2>
+  <p class="sub reveal">Click "View details" on a card to read more.</p>
+  <div class="pgrid">
     {% for p in d.projects %}
-    <div class="acc-item">
-      <button class="acc-head">
-        <span>{{ p.title }}</span>
-        <span class="arrow">▼</span>
-      </button>
-      <div class="acc-body">
-        <p class="muted" style="font-size:.85rem">{{ p.year }}</p>
-        <p class="muted" style="margin-top:8px">{{ p.desc }}</p>
-        {% for t in p.tags %}<span class="tag">{{ t }}</span>{% endfor %}
-      </div>
+    <article class="card pcard reveal">
+      <div class="pnum grad">{{ "%02d"|format(loop.index) }}</div>
+      <h3>{{ p.title }}</h3>
+      <p class="muted" style="font-size:.85rem">{{ p.year }}</p>
+      <div>{% for t in p.tags %}<span class="chip">{{ t }}</span>{% endfor %}</div>
+      <button class="more" aria-expanded="false"><span class="lbl">View details</span> <span class="arrow">▼</span></button>
+      <div class="pbody"><p class="muted">{{ p.desc }}</p></div>
+    </article>
+    {% endfor %}
+  </div>
+</section>
+
+<section id="skills">
+  <h2 class="title reveal">Technical <span class="grad">Skills</span></h2>
+  <div class="sgrid">
+    {% for g in d.skills %}
+    <div class="card reveal">
+      <h3>{{ g.category }}</h3>
+      <div>{% for i in g["items"] %}<span class="chip">{{ i }}</span>{% endfor %}</div>
     </div>
     {% endfor %}
   </div>
 </section>
 
-<section id="skills" class="reveal">
-  <h2>Technical <span>Skills</span></h2>
-  <div class="card">
-    {% for s in d.skills %}
-    <div class="skillrow"><span>{{ s.name }}</span><span class="muted">{{ s.level }}%</span></div>
-    <div class="bar"><div data-level="{{ s.level }}"></div></div>
-    {% endfor %}
-  </div>
-</section>
-
-<section id="education" class="reveal">
-  <h2><span>Education</span> &amp; Certificates</h2>
-  <div class="grid">
+<section id="education">
+  <h2 class="title reveal"><span class="grad">Education</span> &amp; Certificates</h2>
+  <div class="egrid">
     {% for e in d.education %}
-    <div class="card">
+    <div class="card reveal">
       <h3>{{ e.title }}</h3>
       <p class="muted">{{ e.org }}</p>
-      <p class="muted">{{ e.period }}</p>
-      <span class="tag">{{ e.note }}</span>
+      {% if e.period %}<p class="muted" style="font-size:.9rem">{{ e.period }}</p>{% endif %}
+      {% if e.note %}<span class="chip">{{ e.note }}</span>{% endif %}
     </div>
     {% endfor %}
-    <div class="card">
+    <div class="card reveal">
       <h3>Courses &amp; Certificates</h3>
       <ul class="pts">{% for c in d.certs %}<li>{{ c }}</li>{% endfor %}</ul>
     </div>
-    <div class="card">
-      <h3>Languages</h3>
-      {% for l in d.languages %}<span class="tag">{{ l }}</span>{% endfor %}
-    </div>
   </div>
 </section>
 
-<section id="contact" class="reveal">
-  <h2>Get In <span>Touch</span></h2>
-  <div class="card">
-    <p class="muted">Open to entry-level opportunities. Let's connect!</p>
-    <div class="btns" style="margin-top:20px">
-      <a class="btn p" href="{{ gmail }}" target="_blank" rel="noopener">Email Me (Gmail)</a>
-      <a class="btn o" href="{{ mailto }}">Open Mail App</a>
-      <a class="btn o" href="{{ d.linkedin }}" target="_blank">LinkedIn</a>
-      <a class="btn o" href="tel:{{ d.phone }}">{{ d.phone }}</a>
-    </div>
+<section id="contact">
+  <h2 class="title reveal">Get In <span class="grad">Touch</span></h2>
+  <p class="sub reveal">Open to entry-level opportunities. Let's connect!</p>
+  <div class="cgrid">
+    <a class="card clink reveal" href="{{ gmail }}" target="_blank" rel="noopener" data-mail>
+      <span class="ico">📧</span><h3>Email</h3><span class="muted">{{ d.email }}</span>
+    </a>
+    <a class="card clink reveal" href="tel:{{ d.phone|replace(' ','') }}">
+      <span class="ico">📞</span><h3>Phone</h3><span class="muted">{{ d.phone }}</span>
+    </a>
+    <a class="card clink reveal" href="{{ d.linkedin }}" target="_blank" rel="noopener">
+      <span class="ico">🔗</span><h3>LinkedIn</h3><span class="muted">View my profile</span>
+    </a>
   </div>
-</section> -->
-
-<!-- <div class="modal" id="profileModal">
-  <div class="modal-box">
-    <button class="modal-close" id="closeProfile" aria-label="Close">&times;</button>
-    <h2 style="margin-bottom:4px"><span>{{ d.name }}</span></h2>
-    <p class="muted">{{ d.roles | join(' · ') }}</p>
-
-    <h3>About</h3>
-    <p class="muted">{{ d.about }}</p>
-
-    <h3>Experience</h3>
-    <p><strong>{{ d.experience.title }}</strong></p>
-    <p class="muted">{{ d.experience.org }} · {{ d.experience.period }}</p>
-    <ul class="pts">{% for p in d.experience.points %}<li>{{ p }}</li>{% endfor %}</ul>
-
-    <h3>Education</h3>
-    <p><strong>{{ d.education[0].title }}</strong></p>
-    <p class="muted">{{ d.education[0].org }} · {{ d.education[0].period }} · {{ d.education[0].note }}</p>
-
-    <div class="btns" style="margin-top:24px">
-      <a class="btn p" href="{{ url_for('download_resume') }}">Download Resume</a>
-      <a class="btn o" href="{{ gmail }}" target="_blank" rel="noopener">Email Me</a>
-    </div>
+  <div class="btns" style="margin-top:30px">
+    <a class="btn p" href="{{ url_for('download_resume') }}">Download Resume</a>
   </div>
-</div> -->
-
-<div class="modal" id="profileModal">
-  <div class="modal-box">
-    <button class="modal-close" id="closeProfile" aria-label="Close">&times;</button>
-    <h2 style="margin-bottom:4px"><span>{{ d.name }}</span></h2>
-    <p class="muted">{{ d.roles | join(' · ') }}</p>
-
-    <div class="tabs">
-      <button class="tab active" data-tab="t-about">About</button>
-      <button class="tab" data-tab="t-exp">Experience</button>
-      <button class="tab" data-tab="t-proj">Projects</button>
-      <button class="tab" data-tab="t-skills">Skills</button>
-      <button class="tab" data-tab="t-edu">Education</button>
-      <button class="tab" data-tab="t-cert">Certificates</button>
-    </div>
-
-    <div class="tabpane active" id="t-about">
-      <p class="muted">{{ d.about }}</p>
-      <p style="margin-top:16px">
-        {% for l in d.languages %}<span class="tag">{{ l }}</span>{% endfor %}
-      </p>
-    </div>
-
-    <div class="tabpane" id="t-exp">
-      <p><strong>{{ d.experience.title }}</strong></p>
-      <p class="muted">{{ d.experience.org }} · {{ d.experience.period }}</p>
-      <ul class="pts">{% for p in d.experience.points %}<li>{{ p }}</li>{% endfor %}</ul>
-    </div>
-
-    <div class="tabpane" id="t-proj">
-      <div class="pgrid">
-        {% for p in d.projects %}
-        <div class="pcard">
-          <button class="pcard-head">
-            <span class="pnum">0{{ loop.index }}</span>
-            <span>{{ p.title }}</span>
-            <span class="arrow">▼</span>
-          </button>
-          <div class="pbody">
-            <p class="muted" style="font-size:.85rem">{{ p.year }}</p>
-            <p class="muted" style="margin-top:8px">{{ p.desc }}</p>
-            {% for t in p.tags %}<span class="tag">{{ t }}</span>{% endfor %}
-          </div>
-        </div>
-        {% endfor %}
-      </div>
-    </div>
-
-    <div class="tabpane" id="t-skills">
-      {% for s in d.skills %}
-      <div class="skillrow"><span>{{ s.name }}</span><span class="muted">{{ s.level }}%</span></div>
-      <div class="bar"><div data-level="{{ s.level }}"></div></div>
-      {% endfor %}
-    </div>
-
-    <div class="tabpane" id="t-edu">
-      {% for e in d.education %}
-      <div style="margin-bottom:18px">
-        <p><strong>{{ e.title }}</strong></p>
-        <p class="muted">{{ e.org }}{% if e.period %} · {{ e.period }}{% endif %}</p>
-        <span class="tag">{{ e.note }}</span>
-      </div>
-      {% endfor %}
-    </div>
-
-    <div class="tabpane" id="t-cert">
-      <ul class="pts">{% for c in d.certs %}<li>{{ c }}</li>{% endfor %}</ul>
-    </div>
-
-    <div class="btns" style="margin-top:26px">
-      <a class="btn p" href="{{ url_for('download_resume') }}">Download Resume</a>
-      <a class="btn o" href="{{ gmail }}" target="_blank" rel="noopener">Email Me</a>
-    </div>
-  </div>
-</div>
-
-
+</section>
 
 <script>
 // Typing animation
@@ -309,35 +264,13 @@ const roles = {{ d.roles|tojson }};
 let r = 0, c = 0, del = false;
 const el = document.getElementById("typed");
 (function type(){
-  const word = roles[r];
+  const word = roles[r] || "";
   el.textContent = word.substring(0, c);
   if(!del && c < word.length){ c++; setTimeout(type, 90); }
   else if(!del){ del = true; setTimeout(type, 1200); }
   else if(c > 0){ c--; setTimeout(type, 50); }
   else { del = false; r = (r + 1) % roles.length; setTimeout(type, 300); }
 })();
-
-// Scroll reveal + skill bars
-const io = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if(e.isIntersecting){
-      e.target.classList.add("show");
-      e.target.querySelectorAll(".bar div").forEach(b => b.style.width = b.dataset.level + "%");
-    }
-  });
-}, {threshold: .15});
-document.querySelectorAll(".reveal").forEach(s => io.observe(s));
-
-// 3D tilt on project cards
-document.querySelectorAll(".tilt").forEach(card => {
-  card.addEventListener("mousemove", e => {
-    const b = card.getBoundingClientRect();
-    const x = (e.clientX - b.left) / b.width - .5;
-    const y = (e.clientY - b.top) / b.height - .5;
-    card.style.transform = `perspective(700px) rotateY(${x*12}deg) rotateX(${-y*12}deg) translateY(-8px)`;
-  });
-  card.addEventListener("mouseleave", () => card.style.transform = "");
-});
 
 // Light that follows the mouse
 const spot = document.querySelector(".bg .spot");
@@ -346,6 +279,14 @@ addEventListener("mousemove", e => {
   spot.style.setProperty("--my", e.clientY + "px");
 });
 
+// On phones, open the mail app directly
+if(/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)){
+  document.querySelectorAll("[data-mail]").forEach(a => {
+    a.href = {{ mailto|tojson }};
+    a.removeAttribute("target");
+  });
+}
+
 // Theme toggle (dark / day)
 const themeBtn = document.getElementById("themeBtn");
 function paintIcon(){ themeBtn.textContent = document.documentElement.dataset.theme === "dark" ? "🌙" : "☀️"; }
@@ -353,40 +294,44 @@ paintIcon();
 themeBtn.onclick = () => {
   const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
   document.documentElement.dataset.theme = next;
-  localStorage.setItem("theme", next);
+  try{ localStorage.setItem("theme", next); }catch(e){}
   paintIcon();
 };
 
-// Profile modal
-const modal = document.getElementById("profileModal");
-document.getElementById("openProfile").onclick = () => modal.classList.add("show");
-document.getElementById("closeProfile").onclick = () => modal.classList.remove("show");
-modal.addEventListener("click", e => { if(e.target === modal) modal.classList.remove("show"); });
-addEventListener("keydown", e => { if(e.key === "Escape") modal.classList.remove("show"); });
+// Mobile menu
+const menu = document.getElementById("menu");
+document.getElementById("menuBtn").onclick = () => menu.classList.toggle("open");
+const links = [...document.querySelectorAll(".links a")];
+links.forEach(a => a.addEventListener("click", () => menu.classList.remove("open")));
 
-// Tabs
-function fillBars(){
-  document.querySelectorAll("#t-skills .bar div").forEach(b => b.style.width = b.dataset.level + "%");
-}
-document.querySelectorAll(".tab").forEach(tab => {
-  tab.addEventListener("click", () => {
-    document.querySelectorAll(".tab, .tabpane").forEach(x => x.classList.remove("active"));
-    tab.classList.add("active");
-    document.getElementById(tab.dataset.tab).classList.add("active");
-    if(tab.dataset.tab === "t-skills") setTimeout(fillBars, 50);
+// Highlight the menu item of the section you are viewing
+const spy = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if(e.isIntersecting){
+      links.forEach(a => a.classList.toggle("active", a.getAttribute("href") === "#" + e.target.id));
+    }
   });
-});
+}, {rootMargin: "-45% 0px -50% 0px"});
+document.querySelectorAll("section[id]").forEach(s => spy.observe(s));
 
-// Project cards: click a card to show / hide its content
-document.querySelectorAll(".pcard-head").forEach(head => {
-  head.addEventListener("click", () => {
-    const card = head.parentElement, body = card.querySelector(".pbody");
+// Scroll reveal
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if(e.isIntersecting){ e.target.classList.add("show"); io.unobserve(e.target); }
+  });
+}, {threshold: .12});
+document.querySelectorAll(".reveal").forEach(x => io.observe(x));
+
+// Project cards: show / hide details
+document.querySelectorAll(".more").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const card = btn.closest(".pcard"), body = card.querySelector(".pbody");
     const open = card.classList.toggle("open");
     body.style.maxHeight = open ? body.scrollHeight + "px" : 0;
+    btn.setAttribute("aria-expanded", open);
+    btn.querySelector(".lbl").textContent = open ? "Hide details" : "View details";
   });
 });
-
-
 </script>
 </body>
 </html>

@@ -19,6 +19,7 @@
       "title": "Higher Secondary Certificate (HSC)"
     }
   ],
+  "tagline": "Building web applications and improving real-world systems with PHP, Python and AI-assisted development.",
   "email": "dhivyas2026@gmail.com",
   "experience": {
     "org": "Technology Innovation Hub, M. Kumarasamy College of Engineering, Karur",
@@ -85,30 +86,11 @@
     "AI & ML Graduate",
     "Laravel Learner"
   ],
-  "skills": [
-    {
-      "level": 80,
-      "name": "PHP"
-    },
-    {
-      "level": 75,
-      "name": "Python"
-    },
-    {
-      "level": 75,
-      "name": "MySQL"
-    },
-    {
-      "level": 85,
-      "name": "HTML / CSS"
-    },
-    {
-      "level": 70,
-      "name": "JavaScript"
-    },
-    {
-      "level": 70,
-      "name": "Power BI / Tableau"
-    }
+    "skills": [
+    {"category": "Programming", "items": ["PHP", "Python"]},
+    {"category": "Web Technologies", "items": ["HTML", "CSS", "JavaScript", "Laravel (learning)"]},
+    {"category": "Database", "items": ["MySQL"]},
+    {"category": "Data Visualization", "items": ["Power BI", "Tableau"]},
+    {"category": "Development Approach", "items": ["AI-Assisted Coding", "ERP Development", "Responsive Web Design", "File Upload Validation", "Basic Debugging"]}
   ]
 }
